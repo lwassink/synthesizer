@@ -1,0 +1,14 @@
+.key {
+  font-size: 30px;
+  float: left;
+  list-style: none;
+  padding: 10px;
+  border: 2px solid black;
+  border-radius: 5px;
+}
+
+
+.pressed {
+  font-weight: bold;
+  background-color: lightgrey;
+}

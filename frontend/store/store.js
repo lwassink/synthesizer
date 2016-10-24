@@ -3,7 +3,7 @@ import rootReducer from '../reducers/root_reducer';
 
 
 const preloadedState = {
-  notesReducer: { notes: [] }
+  notes: { notes: [] }
 };
 
 export default function configureStore(state = preloadedState) {
