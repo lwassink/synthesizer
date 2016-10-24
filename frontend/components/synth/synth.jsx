@@ -51,7 +51,7 @@ class Synth extends React.Component {
 
     this.playNotes();
     return (
-      <div>{playedNotes}</div>
+      <div className="piano">{playedNotes}</div>
     );
     }
 }

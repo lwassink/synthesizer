@@ -3,7 +3,7 @@ import { keyReleased, keyPressed } from '../../actions/note_actions';
 import Synth from './synth';
 
 const mapStateToProps = (state) => ({
-  notes: state.notes.notes
+  notes: state.notes
 });
 
 const mapDispatchToProps = dispatch => ({

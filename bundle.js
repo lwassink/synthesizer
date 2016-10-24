@@ -21517,7 +21517,9 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var preloadedState = {
-	  notes: { notes: [] }
+	  notes: [],
+	  isRecording: false,
+	  tracks: {}
 	};
 	
 	function configureStore() {
@@ -23329,7 +23331,7 @@
 	
 	var mapStateToProps = function mapStateToProps(state) {
 	  return {
-	    notes: state.notes.notes
+	    notes: state.notes
 	  };
 	};
 	
@@ -23452,7 +23454,7 @@
 	      this.playNotes();
 	      return _react2.default.createElement(
 	        'div',
-	        null,
+	        { className: 'piano' },
 	        playedNotes
 	      );
 	    }
