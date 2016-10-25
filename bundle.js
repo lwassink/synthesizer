@@ -22440,12 +22440,17 @@
 	
 	var _tracks_reducer2 = _interopRequireDefault(_tracks_reducer);
 	
+	var _is_playing_reducer = __webpack_require__(302);
+	
+	var _is_playing_reducer2 = _interopRequireDefault(_is_playing_reducer);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var rootReducer = (0, _redux.combineReducers)({
 	  notes: _notes_reducer2.default,
 	  isRecording: _is_recording_reducer2.default,
-	  tracks: _tracks_reducer2.default
+	  tracks: _tracks_reducer2.default,
+	  isPlaying: _is_playing_reducer2.default
 	});
 	
 	exports.default = rootReducer;
@@ -22491,6 +22496,8 @@
 	        notes.splice(index, 1);
 	        return notes;
 	      }
+	    case _note_actions.GROUP_UPDATE:
+	      return action.notes;
 	    default:
 	      return oldState;
 	  }
@@ -22509,6 +22516,7 @@
 	});
 	var KEY_PRESSED = exports.KEY_PRESSED = 'KEY_PRESSED';
 	var KEY_RELEASED = exports.KEY_RELEASED = 'KEY_RELEASED';
+	var GROUP_UPDATE = exports.GROUP_UPDATE = 'GROUP_UPDATE';
 	
 	var keyPressed = exports.keyPressed = function keyPressed(key) {
 	  return {
@@ -22521,6 +22529,13 @@
 	  return {
 	    type: KEY_RELEASED,
 	    key: key
+	  };
+	};
+	
+	var groupUpdate = exports.groupUpdate = function groupUpdate(notes) {
+	  return {
+	    type: GROUP_UPDATE,
+	    notes: notes
 	  };
 	};
 
@@ -23310,6 +23325,10 @@
 	
 	var _recorder_container2 = _interopRequireDefault(_recorder_container);
 	
+	var _jukebox_container = __webpack_require__(304);
+	
+	var _jukebox_container2 = _interopRequireDefault(_jukebox_container);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var App = function App() {
@@ -23317,7 +23336,8 @@
 	    'div',
 	    { className: 'app' },
 	    _react2.default.createElement(_synth_container2.default, null),
-	    _react2.default.createElement(_recorder_container2.default, null)
+	    _react2.default.createElement(_recorder_container2.default, null),
+	    _react2.default.createElement(_jukebox_container2.default, null)
 	  );
 	};
 	
@@ -36557,7 +36577,6 @@
 	  Object.freeze(oldState);
 	  var newState = {};
 	  (0, _merge2.default)(newState, oldState);
-	  console.log(newState);
 	
 	  switch (action.type) {
 	    case _track_actions.START_RECORDING:
@@ -36686,6 +36705,199 @@
 	};
 	
 	exports.default = Recorder;
+
+/***/ },
+/* 302 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _playing_actions = __webpack_require__(303);
+	
+	function isPlayingReducer() {
+	  var oldState = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+	  var action = arguments[1];
+	
+	  Object.freeze(oldState);
+	  switch (action.type) {
+	    case _playing_actions.START_PLAYING:
+	      return true;
+	    case _playing_actions.STOP_PLAYING:
+	      return false;
+	    default:
+	      return oldState;
+	  }
+	}
+	
+	exports.default = isPlayingReducer;
+
+/***/ },
+/* 303 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var START_PLAYING = exports.START_PLAYING = "START_PLAYING";
+	var STOP_PLAYING = exports.STOP_PLAYING = "STOP_PLAYING";
+	
+	var startPlaying = exports.startPlaying = function startPlaying() {
+	  return {
+	    type: START_PLAYING,
+	    isPlaying: true
+	  };
+	};
+	
+	var stopPlaying = exports.stopPlaying = function stopPlaying() {
+	  return {
+	    type: STOP_PLAYING,
+	    isPlaying: false
+	  };
+	};
+
+/***/ },
+/* 304 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _reactRedux = __webpack_require__(194);
+	
+	var _note_actions = __webpack_require__(191);
+	
+	var _playing_actions = __webpack_require__(303);
+	
+	var _jukebox = __webpack_require__(305);
+	
+	var _jukebox2 = _interopRequireDefault(_jukebox);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var mapStateToProps = function mapStateToProps(state) {
+	  return {
+	    isRecording: state.isRecording,
+	    isPlaying: state.isPlaying,
+	    tracks: state.tracks
+	  };
+	};
+	
+	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+	  return {
+	    onPlay: function onPlay(track) {
+	      return function (e) {
+	        dispatch((0, _playing_actions.startPlaying)());
+	        var playBackStartTime = Date.now();
+	        var currNote = 0;
+	        var timeElapsed = 0;
+	
+	        var interval = setInterval(function () {
+	          if (currNote < track.roll.length - 1) {
+	            if (Date.now() - playBackStartTime > track.roll[currNote].timeSlice) {
+	              currNote += 1;
+	              dispatch((0, _note_actions.groupUpdate)(track.roll[currNote].notes));
+	            }
+	          } else {
+	            clearInterval(interval);
+	            dispatch((0, _playing_actions.stopPlaying)());
+	          }
+	        }, 1);
+	      };
+	    }
+	  };
+	};
+	
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_jukebox2.default);
+
+/***/ },
+/* 305 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _track = __webpack_require__(306);
+	
+	var _track2 = _interopRequireDefault(_track);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function Jukebox(_ref) {
+	  var isPlaying = _ref.isPlaying;
+	  var isRecording = _ref.isRecording;
+	  var tracks = _ref.tracks;
+	  var onPlay = _ref.onPlay;
+	
+	  return _react2.default.createElement(
+	    'div',
+	    { className: 'recordings' },
+	    Object.keys(tracks).reverse().map(function (id) {
+	      return _react2.default.createElement(_track2.default, { key: id, isPlaying: isPlaying,
+	        isRecording: isRecording, track: tracks[id], onPlay: onPlay });
+	    })
+	  );
+	}
+	
+	exports.default = Jukebox;
+
+/***/ },
+/* 306 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function Track(_ref) {
+	  var onPlay = _ref.onPlay;
+	  var track = _ref.track;
+	  var isRecording = _ref.isRecording;
+	  var isPlaying = _ref.isPlaying;
+	
+	  return _react2.default.createElement(
+	    'div',
+	    { key: track.id },
+	    _react2.default.createElement(
+	      'label',
+	      null,
+	      track.name,
+	      _react2.default.createElement(
+	        'button',
+	        {
+	          className: 'play-button',
+	          onClick: onPlay(track),
+	          disabled: isRecording || isPlaying },
+	        'Play'
+	      )
+	    )
+	  );
+	}
+	
+	exports.default = Track;
 
 /***/ }
 /******/ ]);

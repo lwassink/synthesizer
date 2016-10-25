@@ -1,3 +1,7 @@
+body {
+  font-family: sans-serif;
+}
+
 .key {
   font-size: 30px;
   list-style: none;
@@ -7,7 +11,6 @@
   margin: 5px;
   width: 20px;
 }
-
 
 .pressed {
   font-weight: bold;
@@ -21,4 +24,31 @@
 .piano {
   display: flex;
   justify-content: center;
+}
+
+button {
+  padding: 5px;
+  border: 1px solid black;
+  border-radius: 5px;
+  background-color: white;
+  font-size: 12px;
+  margin: 5px;
+}
+
+button:hover {
+  background-color: lightgrey;
+}
+
+button:disabled:hover {
+background-color: white;
+}
+
+.recorder {
+  text-align: center;
+  margin: 0 auto;
+  padding-top: 15px;
+}
+
+.recorder-title {
+  font-size: 20px;
 }

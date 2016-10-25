@@ -7,7 +7,6 @@ function tracksReducer(oldState = {}, action) {
   Object.freeze(oldState);
   let newState = {};
   merge(newState, oldState);
-  console.log(newState);
 
   switch (action.type) {
     case (START_RECORDING):

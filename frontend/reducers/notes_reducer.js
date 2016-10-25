@@ -1,5 +1,4 @@
-import { KEY_RELEASED, KEY_PRESSED } from '../actions/note_actions';
-
+import { GROUP_UPDATE, KEY_RELEASED, KEY_PRESSED } from '../actions/note_actions';
 import { NOTE_NAMES } from '../util/tones';
 
 const _defaultState = [];
@@ -7,7 +6,7 @@ const _defaultState = [];
 function notesReducer(oldState = _defaultState, action) {
   Object.freeze(oldState);
   switch(action.type) {
-    case(KEY_PRESSED):
+    case (KEY_PRESSED):
       if (oldState.includes(action.key)) {
           return oldState;
       } else if ( NOTE_NAMES.includes(action.key) ){
@@ -15,7 +14,7 @@ function notesReducer(oldState = _defaultState, action) {
       } else {
         return oldState;
       }
-    case(KEY_RELEASED):
+    case (KEY_RELEASED):
       let index = oldState.indexOf(action.key);
       if (index === -1) {
         return oldState;
@@ -24,6 +23,8 @@ function notesReducer(oldState = _defaultState, action) {
         notes.splice(index, 1);
         return notes;
       }
+    case (GROUP_UPDATE):
+      return action.notes;
     default:
       return oldState;
   }
